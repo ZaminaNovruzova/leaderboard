@@ -1,0 +1,86 @@
+/* Rənglər */
+$red: #e41d2d;
+$black: #111418;
+$gold: #d4a01e;
+
+/* Konteyner: xətsiz fon */
+.bg-bracket {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  z-index: -1;
+  /* Sol qırmızı, sağ qara yarım */
+  background: linear-gradient(90deg, $red 0 50%, $black 50% 100%);
+
+  /* Sol tərəf nöqtə teksturası */
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  &::before {
+    width: 50%;
+    left: 0;
+    background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.25) 0 4px,
+          transparent 4px
+        )
+        0 0 / 28px 28px,
+      radial-gradient(circle, rgba(0, 0, 0, 0.08) 0 4px, transparent 4px) 14px
+        14px / 28px 28px;
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+  }
+
+  /* Sağ tərəf nöqtə teksturası (daha yumşaq) */
+  &::after {
+    width: 50%;
+    right: 0;
+    left: auto;
+    background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.12) 0 4px,
+          transparent 4px
+        )
+        0 0 / 28px 28px,
+      radial-gradient(circle, rgba(255, 255, 255, 0.06) 0 4px, transparent 4px)
+        14px 14px / 28px 28px;
+    opacity: 0.25;
+  }
+
+  /* Mərkəz SVG (ziqzaq + top) */
+  .crest {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Ziqzaq: altda qızılı qalın stroke, üstündə ağ incə stroke */
+.zigzag {
+  fill: none;
+  stroke-linejoin: miter;
+  stroke-width: 1;
+  stroke-linecap: round;
+
+  &.gold {
+    stroke: $gold;
+    stroke-width: 7;
+    opacity: 0.95;
+  }
+  &.white {
+    stroke: #ffffff;
+    stroke-width: 5;
+  }
+}
+
+/* Topu azca yüksəltmək və parlatmaq */
+.ball {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
