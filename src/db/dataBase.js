@@ -1,26 +1,32 @@
 export const gameDatas = {
-  gamers: [
-    { userId: 1, userName: "Zamina", score: 650, teamId: 10001, gameId: 1001 },
-    { userId: 2, userName: "Gunel", score: 669, teamId: 10001, gameId: 1001 },
-    { userId: 3, userName: "Lamiya", score: 1272, teamId: 10001, gameId: 1001 },
-    { userId: 4, userName: "Aytac", score: 615, teamId: 10001, gameId: 1001 },
-    { userId: 5, userName: "Halima", score: 1889, teamId: 10001, gameId: 1001 },
-    { userId: 6, userName: "Ulker", score: 1932, teamId: 10001, gameId: 1001 },
-    { userId: 7, userName: "Gunel", score: 870, teamId: 10001, gameId: 1001 },
-    { userId: 8, userName: "Sirius", score: 604, teamId: 10002, gameId: 1001 },
-    { userId: 9, userName: "Mirhikmat", score: 1549, teamId: 10002, gameId: 1001 },
-    { userId: 10, userName: "Huseyn", score: 343, teamId: 10002, gameId: 1001 },
-    { userId: 11, userName: "Murad", score: 1425, teamId: 10002, gameId: 1001 },
-    { userId: 12, userName: "Allahveren", score: 1798, teamId: 10002, gameId: 1001 },
-    { userId: 13, userName: "Sahin", score: 1881, teamId: 10002, gameId: 1001 },
-    { userId: 14, userName: "Efqan", score: 1416, teamId: 10002, gameId: 1001 },
-    { userId: 15, userName: "Natiq", score: 1481, teamId: 10002, gameId: 1001 },
-    { userId: 16, userName: "Zerbeyim", score: 677, teamId: 10002, gameId: 1001 },
+  teamA: [
+    { userId: 1, userName: "Zamina", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 2, userName: "Gunel", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 3, userName: "Lamiya", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 4, userName: "Aytac", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 5, userName: "Halima", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 6, userName: "Ulker", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 7, userName: "Gunel", score: 0, teamId: 10001, gameId: 1001 },
+    { userId: 8, userName: "Sirius", score: 0, teamId: 10001, gameId: 1001 },
   ],
-  teams: [
-    { gameId: 1001, teamName: "Barcelona", teamId: 10001 },
-    { gameId: 1001, teamName: "Besiktas", teamId: 10002 },
+
+  teamB: [
+    { userId: 9, userName: "Mirhikmat", score: 0, teamId: 10002, gameId: 1001 },
+    { userId: 10, userName: "Huseyn", score: 0, teamId: 10002, gameId: 1001 },
+    { userId: 11, userName: "Murad", score: 0, teamId: 10002, gameId: 1001 },
+    {
+      userId: 12,
+      userName: "Allahveren",
+      score: 0,
+      teamId: 10002,
+      gameId: 1001,
+    },
+    { userId: 13, userName: "Sahin", score: 0, teamId: 10002, gameId: 1001 },
+    { userId: 14, userName: "Efqan", score: 0, teamId: 10002, gameId: 1001 },
+    { userId: 15, userName: "Natiq", score: 0, teamId: 10002, gameId: 1001 },
+    { userId: 16, userName: "Zerbeyim", score: 0, teamId: 10002, gameId: 1001 },
   ],
+
   games: [
     { gameName: "Football", gameId: 1001 },
     { gameName: "Basketball", gameId: 1002 },

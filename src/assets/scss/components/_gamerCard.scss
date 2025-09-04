@@ -1,6 +1,68 @@
-.gamerBox {
-  width: 500px;
-  height: 500px;
-  background-color: white;
-  border-radius: 2px solid black;
+.leftSide,
+.rightSide {
+  .round {
+    display: flex;
+    position: relative;
+    align-items: center;
+    .gamerBox {
+      width: 150px;
+      background-color: white;
+      border-radius: 2px solid white;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      h4,
+      span {
+        text-wrap: nowrap;
+      }
+    }
+  }
+}
+.leftSide {
+  .round {
+    &:nth-child(odd)::after {
+      content: "";
+      border-right: 3px solid white;
+      border-top: 3px solid white;
+      width: 40px;
+      height: 60px;
+      position: relative;
+      top: 50%;
+    }
+
+    &:nth-child(even)::after {
+      content: "";
+      border-right: 3px solid white;
+      border-bottom: 3px solid white;
+      width: 40px;
+      height: 60px;
+      position: relative;
+      bottom: 50%;
+    }
+  }
+}
+
+.rightSide {
+  .round {
+    &:nth-child(odd)::before {
+      content: "";
+      border-left: 3px solid white;
+      border-top: 3px solid white;
+      width: 40px;
+      height: 60px;
+      position: relative;
+      top: 50%;
+    }
+
+    &:nth-child(even)::before {
+      content: "";
+      border-left: 3px solid white;
+      border-bottom: 3px solid white;
+      width: 40px;
+      height: 60px;
+      position: relative;
+      bottom: 50%;
+    }
+  }
 }
