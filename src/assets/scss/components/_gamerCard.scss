@@ -4,11 +4,12 @@
     display: flex;
     position: relative;
     align-items: center;
+
     .gamerBox {
-      width: 150px;
+      width: 140px;
       background-color: white;
       border-radius: 2px solid white;
-      padding: 10px;
+      padding: 5px 0;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -25,18 +26,19 @@
       content: "";
       border-right: 3px solid white;
       border-top: 3px solid white;
-      width: 40px;
-      height: 60px;
+      width: 20px;
+      height: 100px;
       position: relative;
       top: 50%;
+
     }
 
     &:nth-child(even)::after {
       content: "";
       border-right: 3px solid white;
       border-bottom: 3px solid white;
-      width: 40px;
-      height: 60px;
+      width: 20px;
+      height: 100px;
       position: relative;
       bottom: 50%;
     }
@@ -49,8 +51,8 @@
       content: "";
       border-left: 3px solid white;
       border-top: 3px solid white;
-      width: 40px;
-      height: 60px;
+      width: 20px;
+      height: 100px;
       position: relative;
       top: 50%;
     }
@@ -59,8 +61,8 @@
       content: "";
       border-left: 3px solid white;
       border-bottom: 3px solid white;
-      width: 40px;
-      height: 60px;
+      width: 20px;
+      height: 100px;
       position: relative;
       bottom: 50%;
     }

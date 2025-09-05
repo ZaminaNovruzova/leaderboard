@@ -5,30 +5,64 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 20px 0;
-  // overflow: hidden;
+  overflow: hidden;
   .container {
-    width: 97%;
+    width: 100%;
     margin: 0 auto;
     height: 100%;
     .row {
       height: 100%;
+      padding: 5px;
       justify-content: space-between;
+     
+      .rightSide {
+        flex-flow: row-reverse;
+      }
       .leftSide,
       .rightSide {
-        gap: 15px;
+        display: flex;
+        .sutun {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+        }
       }
-      .roundButton {
-        font-size: 20px;
-        background-color: black;
+      .centerCtrl {
+        text-wrap: noWrap;
         color: white;
-        font-weight: 600;
-        border: none;
-        outline: none;
+        background-color: black;
         border-radius: 15px;
-        padding: 15px;
-        align-self: center;
-        cursor: pointer;
+        padding: 10px;
+        align-self: flex-start;
+        .roundButton {
+          font-size: 16px;
+          background-color: black;
+          color: white;
+          font-weight: 600;
+          border: none;
+          outline: none;
+          border-radius: 15px;
+          padding: 10px;
+          text-transform: capitalize;
+          cursor: pointer;
+        }
+        .gameOver {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          .start {
+            font-size: 16px;
+            background-color: black;
+            color: white;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            border-radius: 15px;
+            padding: 10px;
+            text-transform: capitalize;
+            cursor: pointer;
+          }
+        }
       }
     }
   }

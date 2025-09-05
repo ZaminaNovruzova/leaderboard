@@ -2,157 +2,245 @@ import { useState } from "react";
 import { gameDatas } from "../../db/dataBase";
 import GamerCard from "./components/GamerCard";
 import Background from "../../components/Background";
-const Game = () => {
 
-  //* variables
-  const umumiScoreAnimasiyaMuddeti = 2000; //*ms
-  const neceMilliSeconddaBirArtimOlacaq = 20; //*ms
+//*global deyissen ve funksiya
 
-  const [solKomanda, setsolKomanda] = useState([
-    gameDatas.teamA.map((oyuncu) => ({ ...oyuncu, score: 0 })),
-  ]);
+const umumiScoreAnimasiyaMuddeti = 2000; //*ms
+const neceMilliSeconddaBirArtimOlacaq = 20; //*ms
 
-  const [sagKomanda, setsagKomanda] = useState([
-    gameDatas.teamB.map((oyuncu) => ({ ...oyuncu, score: 0 })),
-  ]);
-  const [hazirdaOynanir, setHazirdaOynanir] = useState(false);
-  const [cempion, setCempion] = useState(null);
+const randomScoreSecenFunksiya = () => {
+  return Math.floor(Math.random() * 3000 + 1); //*max 2999 verir deye+1 yazdim ki max 3000 olsun
+};
 
-  const randomScoreSecenFunksiya = () => {
-    Math.floor(Math.random() * 3000 + 1); //*max 2999 verir deye+1 yazdim ki max 3000 olsun
-  };
+//*hedefe catana qeder animasiyali artim edecek
 
-  const scoreAnimation = (randomSecilenHedef, raundIndexi, playerId, teref) => {
-    let cariScore = 0;
-    const neceDefeArtimOlacaq = Math.max(
-      1,
-      Math.floor(umumiScoreAnimasiyaMuddeti / neceMilliSeconddaBirArtimOlacaq)
-    ); //*en azi 1 addim olmalidir 0 addim ola bilmez
-    const herDefeNeQederArtacaq = Math.ceil(
-      randomSecilenHedef / neceDefeArtimOlacaq
-    );
-    const interval = setInterval(() => {
-      cariScore += herDefeNeQederArtacaq; //*her millisaniyede meselen 100 addim artirir
-      const gosterilecekScore =
-        cariScore >= randomSecilenHedef ? randomSecilenHedef : cariScore; //*hedefe beraber olana qeder artir
+function scoreAnimation({
+  funksiyaIleRandomSecilecekHedef,
+  roundIndex,
+  playerId,
+  komandaTerefi,
+  setLeft,
+  setRight,
+}) {
 
-      const raunddakiScorelariYenile = (evvelkiRaund) => {
-        const copy = evvelkiRaund.map((raund, mapinRaundIndexi) => {
-          if (mapinRaundIndexi !== raundIndexi) {
-            return raund;
-          } else {
-            return raund.map((oyuncu) => {
-              console.log(oyuncu, "salam");
-              if ((oyuncu.userId = playerId)) {
-                return { ...oyuncu, score: gosterilecekScore };
-              } else {
-                return oyuncu;
-              }
-            });
-          }
-        });
-        console.log(copy, "sss");
-        return copy;
-      };
+  let cariScore = 0;
+  const neceDefeArtimOlacaq = Math.max(
+    1,
+    Math.floor(umumiScoreAnimasiyaMuddeti / neceMilliSeconddaBirArtimOlacaq)
+  );
+  const herDefeNeQederArtacaq = Math.ceil(
+    funksiyaIleRandomSecilecekHedef / neceDefeArtimOlacaq
+  );
 
-      if (teref === "sol") {
-        setsolKomanda(raunddakiScorelariYenile);
-      } else {
-        setsagKomanda(raunddakiScorelariYenile);
-      }
-      if (gosterilecekScore === randomSecilenHedef) {
-        clearInterval(interval); //*burda ne yazilacaq
-      }
-    }, neceMilliSeconddaBirArtimOlacaq);
-  };
+  const interval = setInterval(() => {
+    cariScore += herDefeNeQederArtacaq;
+    const gosterilecekScore =
+      cariScore >= funksiyaIleRandomSecilecekHedef
+        ? funksiyaIleRandomSecilecekHedef
+        : cariScore;
 
-  const raunduBaslat = (hansiTeref) => {
-    const indikiRaundlar = hansiTeref === "sol" ? solKomanda : sagKomanda;
-    const RaundlariYenile =
-      hansiTeref === "sol" ? setsolKomanda : setsagKomanda;
+    //*komanda scorelarini cari rounda gore her intervalda her raundda  yenileyecek
 
-    const roundColumnIndex = indikiRaundlar.length - 1;
-    console.log(roundColumnIndex, "bu round indexi");
-    const cariRoundColumn = indikiRaundlar[roundColumnIndex];
-    if (!cariRoundColumn || cariRoundColumn.length <= 1) return;
+    const updater = (prev) =>
+      sutunlardakiScoreYenile(prev, roundIndex, playerId, gosterilecekScore);
 
-    const hedefler = cariRoundColumn.map(() => randomScoreSecenFunksiya());
-    cariRoundColumn.forEach((player, index) =>
-      scoreAnimation(
-        roundColumnIndex,
-        hansiTeref,
-        player.userId,
-        hedefler[index]
-      )
-    );
-    const winners = [];
-    for (let i = 0; i < cariRoundColumn.length; i += 2) {
-      const birinciOyuncu = cariRoundColumn[i];
-      const ikinciOyuncu = cariRoundColumn[i + 1];
+    if (komandaTerefi === "sol") setLeft(updater);
+    else setRight(updater);
+
+    if (gosterilecekScore === funksiyaIleRandomSecilecekHedef) {
+      clearInterval(interval);
     }
+  }, neceMilliSeconddaBirArtimOlacaq);
+}
+
+//*score yenileyen funksiya
+
+const sutunlardakiScoreYenile = (columns, raundIndexi, playerId, newScore) => {
+  return columns.map((column, colIndexi) => {
+  
+    if (colIndexi !== raundIndexi) return column;
+    return column.map((oyuncu) =>
+      oyuncu.userId === playerId ? { ...oyuncu, score: newScore } : oyuncu
+    );
+  });
+};
+
+function scoreGoreQalibiSec(oyunRoundu, scorelar) {
+  const winners = [];
+  for (let i = 0; i < oyunRoundu.length; i += 2) {
+    const birinciOyuncu = oyunRoundu[i];
+    const ikinciOyuncu = oyunRoundu[i + 1];
     if (!ikinciOyuncu) {
       winners.push({ ...birinciOyuncu, score: 0 });
       continue;
     }
     let winner;
-    if (hedefler[i] >= hedefler[i + 1]) {
+    if (scorelar[i] >= scorelar[i + 1]) {
       winner = { ...birinciOyuncu, score: 0 };
     } else {
       winner = { ...ikinciOyuncu, score: 0 };
     }
     winners.push(winner);
-  };
+  }
+  return winners;
+}
+
+const Game = () => {
+  const [solKomanda, setSolKomanda] = useState([
+    //*team a cagirdiq
+    gameDatas.teamA.map((p) => ({ ...p, score: 0 })),
+  ]);
+
+  const [sagKomanda, setSagKomanda] = useState([
+    //*team b cagirdiq
+    gameDatas.teamB.map((p) => ({ ...p, score: 0 })),
+  ]);
+
+  const [hazirdaOynanir, setHazirdaOynanir] = useState(false);
+  const [cempion, setCempion] = useState(null);
+
+  const raunduBaslat = (side) => {
+    const columns = side === "sol" ? solKomanda : sagKomanda; //*columns ya sag komandaya beraber olur yada sol komandaya
+
+    const setColumns = side === "sol" ? setSolKomanda : setSagKomanda;
+
+    const roundIndex = columns.length - 1;
+    const currentColumn = columns[roundIndex];
+    if (!currentColumn || currentColumn.length <= 1) return;
+    const hedefScorelar = currentColumn.map(() => randomScoreSecenFunksiya());
+    currentColumn.forEach((player, index) => {
+      scoreAnimation({
+        funksiyaIleRandomSecilecekHedef: hedefScorelar[index],
+        roundIndex,
+        playerId: player.userId,
+        komandaTerefi: side,
+        setLeft: setSolKomanda,
+        setRight: setSagKomanda,
+      });
+    });
+    //*round bitende walib teyin olunur
+
     setTimeout(() => {
-    RaundlariYenile((prev) => [...prev, winners]);
-  }, DURATION + 50);
+      const winners = scoreGoreQalibiSec(currentColumn, hedefScorelar);
+      setColumns((prev) => [...prev, winners]);
+    }, umumiScoreAnimasiyaMuddeti + 50);
+  };
 
-const novbetiRaunduOynat = () => {
-  if (busy || champion) return;
-  setBusy(true);
+  const finalaBaslaEgerHazirdir = () => {
+    const soldakiSonuncuRound = solKomanda.length - 1;
+    const sagdakiSonuncuRound = sagKomanda.length - 1;
 
-  raunduBaslat("left");
-  raunduBaslat("right");
 
-  setTimeout(() => {
-    const leftSide = solKomanda[solKomanda.length - 1];
-    const rightSide = sagKomanda[sagKomanda.length - 1];
-    const leftSolo = Array.isArray(leftSide) && leftSide.length === 1 ? leftSide[0] : null;
-    const rightSolo = Array.isArray(rightSide) && rightSide.length === 1 ? rightSide[0] : null;
+    const soldakiSonuncuSutun = solKomanda[soldakiSonuncuRound];
+    const sagdakiSonuncuSutun = sagKomanda[sagdakiSonuncuRound];
 
-        if (leftSolo && rightSolo && !champion) {
-      const leftTarget = randomScoreSecenFunksiya()
-      const rightTarget = randomScoreSecenFunksiya();
+    const soldakiSonuncuOyuncu =
+      Array.isArray(soldakiSonuncuSutun) && soldakiSonuncuSutun.length === 1
+        ? soldakiSonuncuSutun[0]
+        : null;
+    const sagdakiSonuncuOyuncu =
+      Array.isArray(sagdakiSonuncuSutun) && sagdakiSonuncuSutun.length === 1
+        ? sagdakiSonuncuSutun[0]
+        : null;
 
-      animatePlayer("left", leftRounds.length - 1, leftSolo.userId, leftTarget);
-      animatePlayer("right", rightRounds.length - 1, rightSolo.userId, rightTarget);
+    if (!soldakiSonuncuOyuncu || !sagdakiSonuncuOyuncu || cempion) return;
 
-      setTimeout(() => {
-        setChampion(
-          leftTarget >= rightTarget ? leftSolo.userName : rightSolo.userName
-        );
-        setBusy(false);
-      }, DURATION + 50);
-    } else {
-      setBusy(false);
-    }
-  }, DURATION + 60);
-};
+    const leftTarget = randomScoreSecenFunksiya();
+    const rightTarget = randomScoreSecenFunksiya();
 
-const resetGame = () => {
-  setLeftRounds([gameDatas.teamA.map((p) => ({ ...p, score: 0 }))]);
-  setRightRounds([gameDatas.teamB.map((p) => ({ ...p, score: 0 }))]);
-  setChampion(null);
-  setBusy(false);
-};
+    scoreAnimation({
+      funksiyaIleRandomSecilecekHedef: leftTarget,
+      roundIndex: soldakiSonuncuRound,
+      playerId: soldakiSonuncuOyuncu.userId,
+      komandaTerefi: "sol",
+      setLeft: setSolKomanda,
+      setRight: setSagKomanda,
+    });
+
+    scoreAnimation({
+      funksiyaIleRandomSecilecekHedef: rightTarget,
+      roundIndex: sagdakiSonuncuRound,
+      playerId: sagdakiSonuncuOyuncu.userId,
+      komandaTerefi: "sag",
+      setLeft: setSolKomanda,
+      setRight: setSagKomanda,
+    });
+
+    setTimeout(() => {
+      setCempion(
+        leftTarget >= rightTarget ? soldakiSonuncuOyuncu.userName : sagdakiSonuncuOyuncu.userName
+      );
+      setHazirdaOynanir(false);
+    }, umumiScoreAnimasiyaMuddeti + 50);
+  };
+  const novbetiRaunduOynat = () => {
+    if (hazirdaOynanir || cempion) return; //*oyun gedrse ve ya cempion artiq seiclibse
+    setHazirdaOynanir(true);
+
+    raunduBaslat("sol"); //*else halinda
+    raunduBaslat("sag");
+
+    setTimeout(() => {
+      finalaBaslaEgerHazirdir();
+      if (!cempion) setHazirdaOynanir(false);
+    }, umumiScoreAnimasiyaMuddeti + 60);
+  };
+
+  const resetGame = () => {
+    setSolKomanda([gameDatas.teamA.map((p) => ({ ...p, score: 0 }))]);
+    setSagKomanda([gameDatas.teamB.map((p) => ({ ...p, score: 0 }))]);
+    setCempion(null);
+    setHazirdaOynanir(false);
+  };
+
   return (
     <>
       <Background />
       <section className="gamePage">
         <div className="container">
           <div className="row">
-            <div className="leftSide"></div>
-            <button className="roundButton"></button>
-            <div className="rightSide"></div>
+            <div className="leftSide">
+              {solKomanda.map((sutun, sutunIndex) => (
+                <div
+                  key={`sol-${sutunIndex + 1}`}
+                  className={`sutun sutun-${sutunIndex + 1}`}
+                >
+                  {sutun.map((player) => (
+                    <GamerCard key={player.userId} user={player} />
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="centerCtrl">
+              {!cempion ? (
+                <button
+                  disabled={hazirdaOynanir}
+                  onClick={novbetiRaunduOynat}
+                  className="roundButton"
+                >
+                  {solKomanda.length === 1 && sagKomanda.length === 1
+                    ? "Oyuna basla!"
+                    : "novbeti round"}
+                </button>
+              ) : (
+                <div className="gameOver">
+                  <h3>Champion: {cempion}</h3>
+                  <button onClick={resetGame} className="start">oyunu yeniden baslat</button>
+                </div>
+              )}
+            </div>
+            <div className="rightSide">
+              {sagKomanda.map((sutun, sutunIndex) => (
+                <div
+                  key={`sag-${sutunIndex + 1}`}
+                  className={`sutun sutun-${sutunIndex + 1}`}
+                >
+                  {sutun.map((player) => (
+                    <GamerCard key={player.userId} user={player} />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -161,133 +249,3 @@ const resetGame = () => {
 };
 
 export default Game;
-
-//     const colIdx = getRounds.length - 1;
-//     const currentCol = getRounds[colIdx];
-//     if (!currentCol || currentCol.length <= 1) return; // artıq təkdirsə oynatma
-
-//     // Hədəfləri əvvəlcədən təyin edək və animasiyaya başlayaq
-//     const targets = currentCol.map(() => randTarget());
-//     currentCol.forEach((p, i) =>
-//       animatePlayer(side, colIdx, p.userId, targets[i])
-//     );
-
-//     // Qalibləri hesabla (yan-yana olan cütlüklər)
-//     const winners = [];
-//     for (let i = 0; i < currentCol.length; i += 2) {
-//       const a = currentCol[i];
-//       const b = currentCol[i + 1];
-//       if (!b) {
-//         // tək qalan avtomatik keçir
-//         winners.push({ ...a, score: 0 });
-//         continue;
-//       }
-//       const winner =
-//         targets[i] >= targets[i + 1] ? { ...a, score: 0 } : { ...b, score: 0 };
-//       winners.push(winner);
-//     }
-
-//     // Animasiya bitdikdən sonra növbəti sütunu əlavə et
-//     setTimeout(() => {
-//       setRounds((prev) => [...prev, winners]);
-//     }, DURATION + 50);
-//   };
-
-//   // Hər iki tərəfdə round oynat
-//   const playNextRound = () => {
-//     if (busy || champion) return;
-//     setBusy(true);
-
-//     playSideRound("left");
-//     playSideRound("right");
-
-//     // Final yoxlaması (hər iki tərəfdə 1 nəfər qalanda)
-//     setTimeout(() => {
-//       const l = leftRounds[leftRounds.length - 1];
-//       const r = rightRounds[rightRounds.length - 1];
-//       const leftSolo =
-//         Array.isArray(l) && l.length === 1 ? l[0] : null;
-//       const rightSolo =
-//         Array.isArray(r) && r.length === 1 ? r[0] : null;
-
-//       // Final varsa, mərkəzdə iki nəfəri də animasiya ilə “oynat” və çempionu çıxar
-//       if (leftSolo && rightSolo && !champion) {
-//         const lTarget = randTarget();
-//         const rTarget = randTarget();
-
-//         // Finalı vizual kartlara yazmaq üçün son sütundakı həmin oyunçuların score-larını yenilə
-//         animatePlayer("left", leftRounds.length - 1, leftSolo.userId, lTarget);
-//         animatePlayer(
-//           "right",
-//           rightRounds.length - 1,
-//           rightSolo.userId,
-//           rTarget
-//         );
-
-//         setTimeout(() => {
-//           setChampion(
-//             lTarget >= rTarget ? leftSolo.userName : rightSolo.userName
-//           );
-//           setBusy(false);
-//         }, DURATION + 50);
-//       } else {
-//         setBusy(false);
-//       }
-//     }, DURATION + 60);
-//   };
-
-//   const resetGame = () => {
-//     setLeftRounds([gameDatas.teamA.map((p) => ({ ...p, score: 0 }))]);
-//     setRightRounds([gameDatas.teamB.map((p) => ({ ...p, score: 0 }))]);
-//     setChampion(null);
-//     setBusy(false);
-//   };
-
-//   return (
-//     <>
-//       <Background />
-//       <section className="gamePage">
-//         <div className="container">
-//           <div className="row" style={{ display: "flex", justifyContent: "space-between" }}>
-//             {/* SOL — bütün round sütunları */}
-//             <div className="leftSide" style={{ display: "flex", gap: 60 }}>
-//               {leftRounds.map((col, ci) => (
-//                 <div key={`L-${ci}`} className={`col col-${ci}`}>
-//                   {col.map((p) => (
-//                     <GamerCard key={p.userId} user={p} />
-//                   ))}
-//                 </div>
-//               ))}
-//             </div>
-
-//             {/* Mərkəz nəzarət düymələri */}
-//             <div className="centerCtrl" style={{ alignSelf: "center", textAlign: "center" }}>
-//               {!champion ? (
-//                 <button disabled={busy} onClick={playNextRound} className="start">
-//                   {leftRounds.length === 1 && rightRounds.length === 1
-//                     ? "Oyuna başla!"
-//                     : "Növbəti round"}
-//                 </button>
-//               ) : (
-//                 <>
-//                   <h2 style={{ color: "#fff", marginBottom: 8 }}>
-//                     Champion: {champion}
-//                   </h2>
-//                   <button onClick={resetGame}>Yenidən başlat</button>
-//                 </>
-//               )}
-//             </div>
-
-//             {/* SAĞ — bütün round sütunları */}
-//             <div className="rightSide" style={{ display: "flex", gap: 60 }}>
-//               {rightRounds.map((col, ci) => (
-//                 <div key={`R-${ci}`} className={`col col-${ci}`}>
-//                   {col.map((p) => (
-//                     <GamerCard key={p.userId} user={p} />
-//                   ))}
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-//       </section>
